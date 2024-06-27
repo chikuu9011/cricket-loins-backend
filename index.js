@@ -1,28 +1,33 @@
-import express from 'express'
-import routes from './route.js';
-import connection from './db.js';
+import express from 'express';
+import connection from './Database/db.js';
 import bodyParser from 'body-parser';
-import cors from 'cors'
+import cors from 'cors';
+import PlayerRoutes from './Routes/PlayerRoutes.js';
+import MatchRoutes from './Routes/MatchesRoutes.js';
+import router from './Routes/playedRoutes.js';
 
 
-const app = express()
+const app = express();
 
-
-
-app.use(cors())
-
+app.use(cors());
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-connection.query('SELECT 1').then(val=>{
-  console.log('conneted');
-  }).catch(err=>{console.log(err);})
+
+connection.query('SELECT 1')
+  .then(() => {
+    console.log('Connected to the database');
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
 // Middleware
-
-app.use(express.json()); // Parse JSON bodies
-
-app.use('/',routes)
+app.use('/players', PlayerRoutes); // Player routes
+app.use('/matches', MatchRoutes); // Match routes
+app.use('/played', router); // Match routes
 
 // Start the server
-app.listen(3000, () => {
-  console.log(`Server is running on port `);
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
